@@ -73,6 +73,24 @@ def vibrate(duration: int = 100) -> None:
 
 # ---------------- Utility functions ----------------
 
+def display_banner():
+    """
+    Displays the Zikr Time banner.
+    """
+    print("\n" + "=" * 37)
+    print("\n  _____  _   _")
+    print(" |__  / (_) | | __  _ __")
+    print("   / /  | | | |/ / | '__|")
+    print("  / /_  | | |   <  | |")
+    print(" /____| |_| |_|\\_\\ |_|\n")
+    print("  _____   _")
+    print(" |_   _| (_)  _ __ ___     ___")
+    print("   | |   | | | '_ ` _ \\   / _ \\")
+    print("   | |   | | | | | | | | |  __/")
+    print("   |_|   |_| |_| |_| |_|  \\___|\n")
+    print("=" * 37)
+
+
 def hold_console_for_input() -> None:
     """
     Pauses execution and waits for user input before exiting.
@@ -254,4 +272,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"{BOLD}", end='')
+    display_banner()
     main(args.long, args.short, args.single)
