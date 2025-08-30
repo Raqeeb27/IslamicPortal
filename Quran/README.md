@@ -9,8 +9,10 @@ The **Hifz Quran** app is based on the **standard 15-line Haaji Quran**, making 
 - **Designed For:** Memorization, daily recitation, and review.
 
 ## 📥 Download
-[**➡ Download Hifz Quran APK from OneDrive**](https://1drv.ms/u/c/f7308b35c42e17b8/EXVDGMizozZLjypOtvmAupsBazkI-TRYm1kOeKFzG3cWVA?e=K3piQq)
+[**➡ Download Hifz Quran APK**](https://github.com/Raqeeb27/IslamicPortal/raw/refs/heads/main/Quran/Hifz_Quran.apk?download=)  
 
+*You can also download the Quran PDF file*
+[**➡ Download 15 Lines Quran PDF**](https://github.com/Raqeeb27/IslamicPortal/raw/refs/heads/main/Quran/15_lines_hifz_quran.pdf?download=)
 
 ---
 
