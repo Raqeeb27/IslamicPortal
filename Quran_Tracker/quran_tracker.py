@@ -88,11 +88,16 @@ def get_valid_juz():
         try:
             raw = input(
                 "\nWhich Juz did you recite today (partial or complete)\n"
-                "[Examples: 1-30 or 2½ or 153/4]\n\n --> "
+                "[Example: 1-30 or 2½ or 153/4]\n\n --> "
             ).strip()
 
+            if raw in ["x", "q"]:
+                print("\n\nExiting...\n")
+                sys.exit(0)
+
             if not raw:
-                print("\n❌ Please enter at least one Juz.\n")
+                input("\n❌ Please enter at least one Juz.\n\nPress Enter to continue..")
+                print()
                 continue
 
             parts = raw.split()
@@ -126,7 +131,8 @@ def get_valid_juz():
                                 results.append(base + frac_symbol)
                                 break
                     else:
-                        print(f"\n❌ Invalid Juz input: {juz}\n")
+                        input(f"\n❌ Invalid Juz input: {juz}\n\nPress Enter to continue...")
+                        print()
                         break
             else:
                 # only runs if no invalid input was found
