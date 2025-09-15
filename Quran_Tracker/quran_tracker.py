@@ -52,7 +52,7 @@ def update_streak(juz_number: str):
                 if entry["date"] == today_str:
                     if juz_number not in entry["juz"]:
                         entry["juz"].append(juz_number)
-                        entry["juz"].sort(key=lambda x: int(x))  # keep sorted
+                        entry["juz"].sort(key=lambda x: float(x.replace("¼", ".25").replace("½", ".5").replace("¾", ".75")))
                     else:
                         print(f"\n\"Juz {juz_number}\" already marked for {today}")
                     todays_juz = entry["juz"]
@@ -76,13 +76,34 @@ def update_streak(juz_number: str):
 
 
 def get_valid_juz():
+    ALLOWED_FRACTIONS = {"1/4": "¼", "1/2": "½", "3/4": "¾"}
+
     while True:
         try:
-            juz = input("\nWhich Juz did you recite today (1–30): ").strip()
+            juz = input("\nWhich Juz did you recite today (partial or complete)\n[Example: 1 or 2½ or 153/4]\n\n --> ").strip()
+
+            # Direct integer juz (1–30)
             if juz.isdigit() and 1 <= int(juz) <= 30:
                 return juz
-            else:
-                print("\n❌ Invalid input. Please enter a juz number between 1 and 30.\n")
+
+            # Juz with fractions (like 5½, 13¾, etc.)
+            for frac_symbol in ALLOWED_FRACTIONS.values():
+                if juz.endswith(frac_symbol):
+                    base = juz[:-1]
+                    if base.isdigit() and 1 <= int(base) <= 30:
+                        return juz
+                    break
+
+            # Juz with slash format (like 11/2 = 1½, 133/4 = 13¾)
+            for frac_str, frac_symbol in ALLOWED_FRACTIONS.items():
+                if juz.endswith(frac_str):
+                    base = juz[: -len(frac_str)]
+                    if base.isdigit() and 1 <= int(base) <= 30:
+                        return base + frac_symbol
+                    break
+
+            print("\n❌ Invalid input. Please enter a number between 1–30, optionally with ¼, ½, ¾, or in slash format like 151/2.\n")
+
         except (KeyboardInterrupt, EOFError):
             print("\n\nKeyboard Interrupt!!!\n\nExiting...\n")
             sys.exit(1)
