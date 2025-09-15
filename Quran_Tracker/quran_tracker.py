@@ -14,13 +14,14 @@ def load_data():
             return json.load(f)
     return {"last_date": None, "streak": 0, "history": []}
 
+
 def save_data(data):
     def custom_dump(obj, level=0):
         indent = " " * 4 * level
         if isinstance(obj, dict):
             items = []
             for k, v in obj.items():
-                items.append(f'{indent}    "{k}": {custom_dump(v, level + 1)}') 
+                items.append(f'{indent}    "{k}": {custom_dump(v, level + 1)}')
             return indent + "{\n" + ",\n".join(items) + f"\n{indent}}}"
         elif isinstance(obj, list):
             # Inline short lists (like juz)
@@ -36,10 +37,11 @@ def save_data(data):
     with open(DATA_FILE, "w") as f:
         f.write(custom_dump(data, 0))
 
+
 def update_streak(juz_number: str):
     data = load_data()
     today = datetime.now().date()
-    today_str = today.strftime("%d-%m-%Y")  # changed format
+    today_str = today.strftime("%d-%m-%Y")
 
     if data["last_date"]:
         last_date = datetime.strptime(data["last_date"], "%d-%m-%Y").date()
@@ -72,6 +74,7 @@ def update_streak(juz_number: str):
     save_data(data)
     return data, todays_juz
 
+
 def get_valid_juz():
     while True:
         try:
@@ -83,7 +86,7 @@ def get_valid_juz():
         except (KeyboardInterrupt, EOFError):
             print("\n\nKeyboard Interrupt!!!\n\nExiting...\n")
             sys.exit(1)
-            
+
 
 def main():
     juz = get_valid_juz()
@@ -92,6 +95,6 @@ def main():
     print(f"🔥 Current Streak: {data['streak']} days")
     print(f"📖 Today's Juz: [ {', '.join(todays_juz)} ]\n")
 
+
 if __name__ == "__main__":
     main()
-
