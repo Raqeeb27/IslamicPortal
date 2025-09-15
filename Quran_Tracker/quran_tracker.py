@@ -38,7 +38,7 @@ def save_data(data):
         f.write(custom_dump(data, 0))
 
 
-def update_streak(juz_number: str):
+def update_streak(juz_list):
     data = load_data()
     today = datetime.now().date()
     today_str = today.strftime("%d-%m-%Y")
@@ -50,25 +50,30 @@ def update_streak(juz_number: str):
             # Add juz to today's entry if not already added
             for entry in data["history"]:
                 if entry["date"] == today_str:
-                    if juz_number not in entry["juz"]:
-                        entry["juz"].append(juz_number)
-                        entry["juz"].sort(key=lambda x: float(x.replace("¼", ".25").replace("½", ".5").replace("¾", ".75")))
-                    else:
-                        print(f"\n\"Juz {juz_number}\" already marked for {today}")
+                    for juz_number in juz_list:
+                        if juz_number not in entry["juz"]:
+                            entry["juz"].append(juz_number)
+                        else:
+                            print(f"\n\"Juz {juz_number}\" already marked for {today_str}")
+                    entry["juz"].sort(
+                        key=lambda x: float(
+                            x.replace("¼", ".25").replace("½", ".5").replace("¾", ".75")
+                        )
+                    )
                     todays_juz = entry["juz"]
                     break
         elif today - last_date == timedelta(days=1):
             data["streak"] += 1
-            data["history"].append({"date": today_str, "juz": [juz_number]})
-            todays_juz = [juz_number]
+            data["history"].append({"date": today_str, "juz": juz_list})
+            todays_juz = juz_list
         else:
             data["streak"] = 1  # reset streak
-            data["history"].append({"date": today_str, "juz": [juz_number]})
-            todays_juz = [juz_number]
+            data["history"].append({"date": today_str, "juz": juz_list})
+            todays_juz = juz_list
     else:
         data["streak"] = 1
-        data["history"].append({"date": today_str, "juz": [juz_number]})
-        todays_juz = [juz_number]
+        data["history"].append({"date": today_str, "juz": juz_list})
+        todays_juz = juz_list
 
     data["last_date"] = today_str
     save_data(data)
@@ -77,32 +82,55 @@ def update_streak(juz_number: str):
 
 def get_valid_juz():
     ALLOWED_FRACTIONS = {"1/4": "¼", "1/2": "½", "3/4": "¾"}
+    results = []
 
     while True:
         try:
-            juz = input("\nWhich Juz did you recite today (partial or complete)\n[Example: 1 or 2½ or 153/4]\n\n --> ").strip()
+            raw = input(
+                "\nWhich Juz did you recite today (partial or complete)\n"
+                "[Examples: 1-30 or 2½ or 153/4]\n\n --> "
+            ).strip()
 
-            # Direct integer juz (1–30)
-            if juz.isdigit() and 1 <= int(juz) <= 30:
-                return juz
+            if not raw:
+                print("\n❌ Please enter at least one Juz.\n")
+                continue
 
-            # Juz with fractions (like 5½, 13¾, etc.)
-            for frac_symbol in ALLOWED_FRACTIONS.values():
-                if juz.endswith(frac_symbol):
-                    base = juz[:-1]
-                    if base.isdigit() and 1 <= int(base) <= 30:
-                        return juz
-                    break
+            parts = raw.split()
+            results = []
 
-            # Juz with slash format (like 11/2 = 1½, 133/4 = 13¾)
-            for frac_str, frac_symbol in ALLOWED_FRACTIONS.items():
-                if juz.endswith(frac_str):
-                    base = juz[: -len(frac_str)]
-                    if base.isdigit() and 1 <= int(base) <= 30:
-                        return base + frac_symbol
-                    break
+            for juz in parts:
+                # Direct integer juz (1–30)
+                try:
+                    if juz.isdigit() and 1 <= int(juz) <= 30:
+                        results.append(juz)
+                        continue
+                except ValueError as e:
+                    pass
+                except Exception as e:
+                    print(f"\n❌ Invalid Input: {e}")
+                    sys.exit(1)
 
-            print("\n❌ Invalid input. Please enter a number between 1–30, optionally with ¼, ½, ¾, or in slash format like 151/2.\n")
+                # Juz with fraction symbols (like 5½, 13¾, etc.)
+                for frac_symbol in ALLOWED_FRACTIONS.values():
+                    if juz.endswith(frac_symbol):
+                        base = juz[:-1]
+                        if base.isdigit() and 1 <= int(base) <= 30:
+                            results.append(juz)
+                            break
+                else:
+                    # Juz with slash format (like 11/2 = 1½, 133/4 = 13¾)
+                    for frac_str, frac_symbol in ALLOWED_FRACTIONS.items():
+                        if juz.endswith(frac_str):
+                            base = juz[: -len(frac_str)]
+                            if base.isdigit() and 1 <= int(base) <= 30:
+                                results.append(base + frac_symbol)
+                                break
+                    else:
+                        print(f"\n❌ Invalid Juz input: {juz}\n")
+                        break
+            else:
+                # only runs if no invalid input was found
+                return results
 
         except (KeyboardInterrupt, EOFError):
             print("\n\nKeyboard Interrupt!!!\n\nExiting...\n")
@@ -110,12 +138,13 @@ def get_valid_juz():
 
 
 def main():
-    juz = get_valid_juz()
-    data, todays_juz = update_streak(juz)
-    print(f"\n✅ Logged \"Juz {juz}\" for {data['last_date']}.")
+    juz_list = get_valid_juz()
+    data, todays_juz = update_streak(juz_list)
+    print(f"\n✅ Logged Juz {', '.join(juz_list)} for {data['last_date']}.")
     print(f"🔥 Current Streak: {data['streak']} days")
     print(f"📖 Today's Juz: [ {', '.join(todays_juz)} ]\n")
 
 
 if __name__ == "__main__":
     main()
+
