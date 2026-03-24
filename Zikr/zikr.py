@@ -169,6 +169,7 @@ def single_zikr() -> None:
         print(f"{index}.".center(4) + f"{tasbeeh}")
 
     try:
+        print("\n" + "=" * 37)
         choice = int(input("\nSelect Zikr:\n --> "))
         if choice < 1 or choice > 11:
             raise ValueError
@@ -185,7 +186,8 @@ def single_zikr() -> None:
     except CustomError:
         print("\nInvalid input!\nPlease enter positive integer value\n\nExiting...\n")
         sys.exit(1)
-    print()
+
+    print("\n" + "=" * 37 + "\n")
 
     zikr(f"{all_zikr[choice-1]} [ x {count} ]", count)
     print("Allhamdulillah DONE!\n")
